@@ -1,20 +1,23 @@
 from pygooglenews import GoogleNews
-from bs4 import BeautifulSoup
+import newspaper
 import requests
 
 gn = GoogleNews()
-term = gn.search('Elon Musk', when = "24h")
+term = gn.search('Elon Musk twitter x', when = "24h")
 entries = term['entries']
-
 
 
 for entry in entries:
   print("Title:", entry['title'])
-  response = requests.get(entry['links'][0]['href'])
+  link = entry['links'][0]['href']
+  response = requests.get(link)
 
   if response.status_code == 200:
-    soup = BeautifulSoup(response.content, "html.parser")
-    print(soup.text[:1000])
+    article = newspaper.Article(link)
+    article.download()
+    article.parse()
+    text = article.text
+    print(text)
   else:
     print(f"Failed to retrieve the page for {entry['title']}")
   print("-----------------------------------------------")
