@@ -1,4 +1,4 @@
-from src import fetch_news_articles, parse_article_from_link, create_script_from_articles
+from src import fetch_news_articles, parse_article_from_link, create_script_from_articles, create_audio_from_phrases
 
 entries = fetch_news_articles('twitter')
 content = ''
@@ -17,4 +17,5 @@ for entry in entries[:5]:
 
     print("-----------------------------------------------")
 
-print(create_script_from_articles(content))
+phrases = create_script_from_articles(content)
+audios = create_audio_from_phrases(phrases)

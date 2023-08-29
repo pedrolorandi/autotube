@@ -13,6 +13,7 @@ def create_script_from_articles(content):
 
   # user_prompt = content + "With the information provided, write a youtube script using informal, opinionated, and somewhat satirical tone. Use casual language and often employ sarcasm to make points. Use a sense of skepticism towards media narratives and a desire to present a more down-to-earth perspective on events. The tone should be somewhat confrontational at times, challenging conventional ideas and encouraging the audience to think critically. Overall, the tone should be a blend of commentary, critique, and humor. The script should contain 2000 words. Don't write introduction and conclusion paragraphs. WRITE THE SPEAKING PART ONLY."
 
+  print("Creating script")
   # response = openai.ChatCompletion.create(
   #     model="gpt-4",
   #     temperature=1,
@@ -41,8 +42,12 @@ As for the company's value, it's estimated that the name change itself could mak
 
 So, what's the takeaway here? While it's quite amusing to toss all these jabs at Musk, let's not miss the point. This whole saga sheds a light on how the actions of these billionaires can have real world consequences, and sometimes, those consequences show up in the form of angry gamers booing them at an e-sports tournament. Don't know if Elon will ever bring back Twitter, or if X is here to stay, but one thing's for sure - Valorant gamers have certainly got their priorities straight."""
 
+  print("Creating paragraphs")
   paragraphs = re.split(r'\.(\s+|\Z)', response)
+  
+  print("Creating phrases")
   phrases = [segment.strip() for segment in paragraphs if segment]
 
+  print("-----------------------------------------------")
   return phrases
    
