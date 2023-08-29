@@ -43,7 +43,7 @@ As for the company's value, it's estimated that the name change itself could mak
 So, what's the takeaway here? While it's quite amusing to toss all these jabs at Musk, let's not miss the point. This whole saga sheds a light on how the actions of these billionaires can have real world consequences, and sometimes, those consequences show up in the form of angry gamers booing them at an e-sports tournament. Don't know if Elon will ever bring back Twitter, or if X is here to stay, but one thing's for sure - Valorant gamers have certainly got their priorities straight."""
 
   print("Creating paragraphs")
-  paragraphs = re.split(r'\.(\s+|\Z)', response)
+  paragraphs = re.split(r'(?<=[.?!])(\s+|\Z)', response)
   
   print("Creating phrases")
   phrases = [segment.strip() for segment in paragraphs if segment]
