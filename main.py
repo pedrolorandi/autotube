@@ -1,12 +1,4 @@
-import os
-from dotenv import load_dotenv
 from src import fetch_news_articles, parse_article_from_link, create_script_from_articles
-
-# Load the .env file
-load_dotenv()
-
-# API keys
-openai_api_key = os.environ.get('OPENAI_API_KEY')
 
 entries = fetch_news_articles('twitter')
 content = ''
