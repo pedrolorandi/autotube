@@ -5,7 +5,7 @@ import re
 def parse_article_from_link(link):
     try:
         response = requests.get(link, timeout=10)
-        response.raise_for_status()  # This will raise an HTTPError if the HTTP request returned an unsuccessful status code
+        response.raise_for_status()
         
         article = newspaper.Article(link)
         article.set_html(response.content)
