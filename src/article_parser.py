@@ -3,10 +3,6 @@ import requests
 import re
 
 def parse_article_from_link(link):
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    }
-    
     try:
         response = requests.get(link, timeout=10)
         response.raise_for_status()  # This will raise an HTTPError if the HTTP request returned an unsuccessful status code
