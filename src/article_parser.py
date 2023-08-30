@@ -3,17 +3,27 @@ import requests
 import re
 
 def parse_article_from_link(link):
-    response = requests.get(link)
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
     
-    if response.status_code != 200:
-        return None
+    try:
+        response = requests.get(link, timeout=10)
+        response.raise_for_status()  # This will raise an HTTPError if the HTTP request returned an unsuccessful status code
+        
+        article = newspaper.Article(link)
+        article.set_html(response.content)
+        article.parse()
     
-    article = newspaper.Article(link)
-    article.set_html(response.content)
-    article.parse()
+        text = article.text
+        text = re.sub(r'\n+', '', text)
+        text = re.sub(r'\s*Advertisement\s*', '', text)
+        
+        return text
     
-    text = article.text
-    text = re.sub(r'\n+', '', text)
-    text = re.sub(r'\s*Advertisement\s*', '', text)
-    
-    return text
+    except requests.RequestException as e:
+        print(f"Failed to fetch {link} due to error: {e}")
+    except Exception as e:
+        print(f"An error occurred while processing the article: {e}")
+
+    return None

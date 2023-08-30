@@ -24,10 +24,8 @@ def create_script_from_articles(content):
 
   # return response.choices[0].message.content
   
-  response = """Well, well, what do we have here? If it isn't our favorite billionaire venture capitalist, "Twitter but without the Twit" enthusiast, and casual intergalactic travel expert, Elon Musk making yet another spectacle, this time at the Valorant World Championship Final. Yes, the very same Musk who decided one day, "Hmmm, what should I do today? I know! I will buy Twitter and rename it to X. Yeah, that'll be fun."
-
-So, our dear Elon shows up at this e-sports event, probably expecting roses to be thrown at him, right? Wrong! If you've seen the clip that's going viral (you know courtesy of the site he renamed), our boy gets booed."""
-
+  response = '''Well, well, what do we have here? If it isn't our favorite billionaire venture capitalist, "Twitter but without the Twit" enthusiast, and casual intergalactic travel expert, Elon Musk making yet another spectacle, this time at the Valorant World Championship Final. Yes, the very same Musk who decided one day, "Hmmm, what should I do today? I know! I will buy Twitter and rename it to X. Yeah, that'll be fun."'''
+  
   print("Creating paragraphs")
   paragraphs = re.split(r'(?<=[.?!])(\s+|\Z)', response)
   

@@ -13,6 +13,7 @@ def create_audio_from_phrases(phrases, directory = "audio"):
       os.makedirs(directory)
 
   url = "https://api.elevenlabs.io/v1/text-to-speech/5Z7y3RcIvAGUdlLFOUgk"
+
   headers = {
     "Accept": "audio/wav",
     "Content-Type": "application/json",
@@ -30,8 +31,16 @@ def create_audio_from_phrases(phrases, directory = "audio"):
     }
   }
 
-  for i, phrase in enumerate(phrases, start = 1):
-    print(f"Creating audio #{i}")
+  file_counter = 1
+
+  for phrase in phrases:
+
+    # Skip if the phrase is empty
+    if not phrase.strip():
+      continue
+
+    print(f"Creating audio #{file_counter}")
+    print(phrase)
 
     data["text"] = phrase
 
@@ -39,12 +48,14 @@ def create_audio_from_phrases(phrases, directory = "audio"):
       response = requests.post(url, json = data, headers = headers)
       response.raise_for_status()
 
-      file_path = os.path.join(directory, f"audio_{i}.wav")
+      file_path = os.path.join(directory, f"audio_{file_counter}.wav")
 
       with open(file_path, "wb") as file:
         file.write(response.content)
 
+      file_counter += 1
+
     except requests.RequestException as e:
-      print(f"Error for phrase {i}: {e}")
+      print(f"Error for phrase {file_counter}: {e}")
 
   print("-----------------------------------------------")
