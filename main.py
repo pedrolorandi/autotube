@@ -5,6 +5,7 @@ content = ''
 valid_articles = 0
 
 for entry in entries:
+    # Fetch only 5 valid articles
     if valid_articles == 5:
         break
 
