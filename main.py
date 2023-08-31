@@ -1,28 +1,7 @@
-from src import fetch_news_articles, parse_article_from_link, create_script_from_articles, create_audio_from_phrases
+from src import create_content_from_articles, create_script_from_content, create_audio_from_phrases
 
-entries = fetch_news_articles('twitter')
-content = ''
-valid_articles = 0
+MAX_VALID_ARTICLES = 5
 
-for entry in entries:
-    # Fetch only 5 valid articles
-    if valid_articles == 5:
-        break
-
-    print("Title:", entry['title'])
-    link = entry['links'][0]['href']
-    article_text = parse_article_from_link(link)
-    
-    if article_text:
-        content += "Title: " + entry['title'] + "."
-        content += article_text + "\n-\n"
-        print("Article added")
-        print(valid_articles)
-        valid_articles += 1
-    else:
-        print(f"Failed to retrieve the page for {entry['title']}")
-
-    print("-----------------------------------------------")
-
-phrases = create_script_from_articles(content)
+content = create_content_from_articles('twitter', MAX_VALID_ARTICLES)
+phrases = create_script_from_content(content)
 audios = create_audio_from_phrases(phrases)

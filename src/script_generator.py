@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 # Load the .env file
 load_dotenv()
 
-def create_script_from_articles(content):
+def create_script_from_content(content):
   # API keys
   openai.organization = os.environ.get('OPENAI_ORG_ID')
   openai.api_key = os.environ.get('OPENAI_API_KEY')
