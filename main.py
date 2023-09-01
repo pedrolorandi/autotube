@@ -17,6 +17,7 @@ def start():
   content['searchTerm'] = "Elon Musk"
 
   robots['text'](content)
+  print(content)
 
 if __name__ == "__main__":
   print("Process started")

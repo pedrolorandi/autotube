@@ -1,7 +1,10 @@
 from pygooglenews import GoogleNews
+from dotenv import load_dotenv
 import newspaper
 import requests
 import re
+import os
+import openai
 
 def robot(content):
   def fetch_news(query, duration="24h"):
@@ -64,8 +67,30 @@ def robot(content):
 
       print("---")
 
-    print("News parsing comeplete.\n---")
+    print("News parsing complete.\n---")
+
+  def generate_content(content):
+    print("Generating content")
+
+    full_content = ""
+
+    for article in content['articles']:
+      full_content += "Title: " + article['title'] + "."
+      full_content += article['text'] + " | "
+
+    content['content'] = full_content
+
+    print("Content generation complete.\n---")
+
+  def generate_script(content):
+    # Load the .env file
+    load_dotenv()
+
+    # API keys
+    openai.organization = os.environ.get('OPENAI_ORG_ID')
+    openai.api_key = os.environ.get('OPENAI_API_KEY')
 
   fetch_news(content['searchTerm'])
   parse_news(content)
+  generate_content(content)
   # generate_script(content)
