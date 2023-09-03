@@ -106,7 +106,27 @@ def robot(content):
 
     print("Script generation complete.\n---")
 
+  def generate_phrases(content):
+    print("Generating paragraphs")
+    paragraphs = re.split(r'(?<=[.?!])(\s+|\Z)', content['script'])
+
+    print("Creating phrases")
+    phrases = [segment.strip() for segment in paragraphs if segment.strip()]
+
+    content['sentences'] = []
+
+    for idx, phrase in enumerate(phrases):
+      new_sentence = {
+        'id': idx,
+        'text': phrase,
+        'keywords': [],
+        'images': []
+      }
+
+      content['sentences'].append(new_sentence)
+
   fetch_news(content['searchTerm'])
   parse_news(content)
   generate_content(content)
   generate_script(content)
+  generate_phrases(content)
