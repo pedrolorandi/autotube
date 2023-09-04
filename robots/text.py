@@ -1,13 +1,16 @@
 from pygooglenews import GoogleNews
 from dotenv import load_dotenv
+from .state import StateHandler
 import newspaper
 import requests
 import re
 import os
 import openai
-import json
 
-def robot(content):
+def robot():
+  handler = StateHandler()
+  content = handler.load()  
+
   def fetch_news(query, duration="24h"):
     print("Fetching news")
 
@@ -182,7 +185,9 @@ def robot(content):
 
   fetch_news(content['searchTerm'])
   parse_news(content)
-  generate_content(content)
-  generate_script(content)
-  generate_sentences(content)
-  generate_keywords(content)
+  # generate_content(content)
+  # generate_script(content)
+  # generate_sentences(content)
+  # generate_keywords(content)
+
+  handler.save(content)

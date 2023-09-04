@@ -6,17 +6,21 @@
 # phrases = create_script_from_content(content)
 # audios = create_audio_from_phrases(phrases)
 
-from robots import text_robot
+from robots import term_robot, text_robot, StateHandler
 
 robots = {
+  'term': term_robot,
   'text': text_robot
 }
 
 def start():
-  content = {}
-  content['searchTerm'] = "Elon Musk"
+  robots['term']()
+  robots['text']()
 
-  robots['text'](content)
+  handler = StateHandler()
+  content = handler.load()
+
+  print(content)
 
 if __name__ == "__main__":
   print("Process started")
