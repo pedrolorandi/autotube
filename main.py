@@ -9,19 +9,9 @@ robots = {
 }
 
 def start():
-
-  # robots['term']()
+  robots['term']()
   robots['text']()
-  # robots['audio']()
-
-  # Instantiate the StateHandler to handle the content's state
-  handler = StateHandler()
-
-  # Load the content using the StateHandler
-  content = handler.load()
-
-  # Print the loaded content
-  print(content)
+  robots['audio']()
 
 # Check if this script is executed as the main module
 if __name__ == "__main__":

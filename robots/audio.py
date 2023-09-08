@@ -12,7 +12,7 @@ def robot():
   # Load the .env file
   load_dotenv()
 
-  print("Creating audios...")
+  print("Generating audios...")
 
   # Ensure the directory exists
   if not os.path.exists(directory):
@@ -36,3 +36,23 @@ def robot():
       "use_speaker_boost": False
     }
   }
+
+  for idx, sentence in enumerate(content['sentences']):
+    print(f"Creating audio #{idx}")
+
+    text = sentence['text']
+    data["text"] = text
+
+    try:
+      response = requests.post(url, json = data, headers = headers)
+      response.raise_for_status()
+
+      file_path = os.path.join(directory, f"audio_{idx}.wav")
+
+      with open(file_path, "wb") as file:
+        file.write(response.content)
+
+    except requests.RequestException as e:
+      print(f"Error for phrase {idx}: {e}")
+
+  print("Audio generation complete.\n---")
