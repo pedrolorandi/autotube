@@ -86,7 +86,7 @@ def robot():
 
   def generate_script(content):
     # Generate a script using OpenAI's GPT-4
-    print("Generating script...")
+    print("Generating script, please wait...")
     load_dotenv()
 
     openai.organization = os.environ.get('OPENAI_ORG_ID')
@@ -131,8 +131,8 @@ def robot():
     openai.organization = os.environ.get('OPENAI_ORG_ID')
     openai.api_key = os.environ.get('OPENAI_API_KEY')
 
-    for idx, sentence in enumerate(content['sentences'][:1]):
-      user_prompt = "Return a string with the 6 main keywords... [rest of your prompt]"
+    for idx, sentence in enumerate(content['sentences']):
+      user_prompt = "Please identify the keywords in the following phrase:" + sentence['text'] + ". Do not include " + content['searchTerm'] + "Return only the keywords split by a comma."
       
       response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -142,7 +142,7 @@ def robot():
         ]
       )
       
-      sentence['keywords'] = response.choices[0].message.content.split(' ')
+      sentence['keywords'] = response.choices[0].message.content.split(',')
       print(f"Keywords for sentence {idx} completed.")
     
     print("Keywords generation complete.\n---")

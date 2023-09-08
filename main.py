@@ -1,18 +1,18 @@
 # Importing necessary modules and classes
-from robots import term_robot, text_robot, StateHandler
+from robots import term_robot, text_robot, audio_robot, StateHandler
 
 # Define a dictionary of robots, mapping their names to their respective functions
 robots = {
   'term': term_robot,
-  'text': text_robot
+  'text': text_robot,
+  'audio': audio_robot
 }
 
 def start():
-  # Start the term robot
-  robots['term']()
-  
-  # Start the text robot
+
+  # robots['term']()
   robots['text']()
+  # robots['audio']()
 
   # Instantiate the StateHandler to handle the content's state
   handler = StateHandler()
