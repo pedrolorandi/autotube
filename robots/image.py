@@ -18,7 +18,7 @@ def robot():
 
   for sentece in content['sentences']:
     keywords =  ' '.join(sentece['keywords'])
-    searchTerm = content['searchTerm'] + keywords
+    searchTerm = content['searchTerm'] + ' ' + keywords
 
     resource = build(
       'customsearch', 
