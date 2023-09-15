@@ -13,22 +13,30 @@ def robot():
   content = handler.load()  
 
   def fetch_news(query, duration="24h"):
-    # Fetch news using GoogleNews API
-    print("Fetching news...")
-    gn = GoogleNews()
-    search = gn.search(query, when=duration)
-    entries = search['entries']
+    """Fetches news articles based on the query and duration provided.
     
-    content['entries'] = []
+    Parameters:
+    - query (str): The search query for fetching news articles.
+    - duration (str): The time duration for which to fetch news articles.
 
-    for entry in entries[:10]:
-      new_entry = {
-          'title': entry['title'],
-          'link': entry['link']
-      }
-      content['entries'].append(new_entry)
+    Returns:
+    - None
+    """
+    print("Fetching news...")
 
-    print("News fetching complete.\n---")
+    try:
+      gn = GoogleNews()
+      search = gn.search(query, when=duration)
+      entries = search['entries']
+
+      content['entries'] = [
+        {'title': entry['title'], 'link': entry['link']}
+        for entry in entries[:10]
+      ]
+    except Exception as e:
+      print(f"An error occurred while fetching the news: {e}")
+    else:
+      print("News fetching complete.\n---")
 
   def parse_news(content):
     # Parse news articles from the provided links

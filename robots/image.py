@@ -30,10 +30,13 @@ def robot():
       q = searchTerm, 
       cx = cse_engine_id,
       searchType = 'image',
-      imgSize = 'LARGE'
+      imgSize = 'HUGE'
     ).execute()
 
-    pprint.pprint(results)
+    print(searchTerm + ':\n')
+
+    for result in results['items']:
+      pprint.pprint(result['link'])
     print("-----------")
 
     # TODO
