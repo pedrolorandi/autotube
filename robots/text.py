@@ -210,21 +210,46 @@ def robot():
     print("Sentences generation complete.\n---") 
 
   def generate_keywords(content):
-    # Extract keywords from the generated sentences using OpenAI
+    """
+    Extracts keywords from each sentence in the content dictionary using OpenAI's GPT-3.5-turbo model.
+    
+    The keywords for each sentence are stored in the 'keywords' key of each sentence dictionary.
+    
+    Parameters:
+    content (dict): Dictionary holding various pieces of information, including the sentences from which keywords will be extracted.
+
+    Returns:
+    None: Modifies the content dictionary in place to add the extracted keywords.
+    """
     print("Generating keywords...")
 
+    # Looping through each sentence in the content dictionary to extract keywords
     for idx, sentence in enumerate(content['sentences']):
-      user_prompt = "Please identify the keywords in the following phrase:" + sentence['text'] + ". Do not include " + content['searchTerm'] + "Return only the keywords split by a comma."
+      # Creating a user prompt to instruct the GPT-3.5-turbo model on how to extract keywords
       
-      response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        temperature=0.5,
-        messages=[
-            {"role": "user", "content": user_prompt}
-        ]
+      user_prompt = (
+        f"Please identify the keywords in the following phrase: {sentence['text']}. "
+        f"Do not include {content['searchTerm']}. "
+        "Return only the keywords split by a comma."
       )
       
-      sentence['keywords'] = response.choices[0].message.content.split(',')
+      try:
+        # Making a request to the OpenAI API to extract keywords
+        response = openai.ChatCompletion.create(
+          model="gpt-3.5-turbo",
+          temperature=0.5,
+          messages=[
+              {"role": "user", "content": user_prompt}
+          ]
+        )
+
+        # Storing the extracted keywords in the 'keywords' key of the sentence dictionary
+        sentence['keywords'] = response.choices[0].message.content.split(',')
+      except Exception as e:
+        # Handling any exceptions that occur during the keyword extraction
+        print(f"Failed to generate keywords for sentence {idx} due to OpenAI API error: {e}")
+        sentence['keywords'] = []
+        
       print(f"Keywords for sentence {idx} completed.")
     
     print("Keywords generation complete.\n---")
