@@ -1,7 +1,7 @@
 from pygooglenews import GoogleNews
 from dotenv import load_dotenv
 from .state import StateHandler
-import newspaper
+from newspaper import Article
 import requests
 import re
 import os
@@ -39,36 +39,42 @@ def robot():
       print("News fetching complete.\n---")
 
   def parse_news(content):
-    # Parse news articles from the provided links
+    """Parses the news articles from the links stored in the content dictionary.
+    
+    Parameters:
+    - content (dict): The content dictionary storing the news data.
+
+    Returns:
+    - None
+    """
     print("Parsing news...")
+
+    newline_regex = re.compile(r'\n+')
+    adv_regex = re.compile(r'\s*Advertisement\s*')
 
     valid_articles_count = 0
     content['articles'] = []
 
-    for entry in content['entries']:
-      if valid_articles_count == 5:
+    for entry in content.get('entries', []):
+      if valid_articles_count >= 5:
         break
 
       print("Title:", entry['title'])
 
       try:
-        response = requests.get(entry['link'], timeout=10)
+        response = requests.get(entry['link'], timeout = 10)
         response.raise_for_status()
 
         # Extract and clean the article text
-        article = newspaper.Article(entry['link'])
+        article = Article(entry['link'])
         article.set_html(response.content)
         article.parse()
 
         text = article.text
-        text = re.sub(r'\n+', '', text)
-        text = re.sub(r'\s*Advertisement\s*', '', text)
-        
-        new_article = {
-            'title': entry['title'],
-            'text': text
-        }
-        content['articles'].append(new_article)
+        text = newline_regex.sub('', text)
+        text = adv_regex.sub('', text)
+
+        content['articles'].append({'title': entry['title'], 'text': text})
         valid_articles_count += 1
         print("Article added")
       except requests.RequestException as e:
