@@ -87,15 +87,28 @@ def robot():
     print("News parsing complete.\n---")
 
   def generate_content(content):
-    # Generate concatenated content from parsed articles
+    """Generates a single string containing all article content.
+    
+    Parameters:
+    - content (dict): The content dictionary storing the news data.
+
+    Returns:
+    - None
+    """
     print("Generating content...")
+
+    if not content.get('articles'):
+      print("No articles to generate content from.")
+      content['content'] = ""
+      return
+
+    content['content'] = " | ".join(
+      f"Title: {article['title']}. {article['text']}"
+      for article in content['articles']
+    )
+
     full_content = ""
 
-    for article in content['articles']:
-      full_content += "Title: " + article['title'] + "."
-      full_content += article['text'] + " | "
-
-    content['content'] = full_content
     print("Content generation complete.\n---")
 
   def generate_script(content):
