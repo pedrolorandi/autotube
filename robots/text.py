@@ -31,17 +31,23 @@ def robot():
     print("Fetching news...")
 
     try:
+      # Initialize GoogleNews client
       gn = GoogleNews()
+
+      # Search for news articles using the provided query and duration
       search = gn.search(query, when=duration)
       entries = search['entries']
 
+      # Store the top 10 news entries in the content dictionary
       content['entries'] = [
-        {'title': entry['title'], 'link': entry['link']}
-        for entry in entries[:10]
+          {'title': entry['title'], 'link': entry['link']}
+          for entry in entries[:10]
       ]
     except Exception as e:
+      # Handle any exception that occurs during the news fetching process
       print(f"An error occurred while fetching the news: {e}")
     else:
+      # Confirm the successful completion of the news fetching process
       print("News fetching complete.\n---")
 
   def parse_news(content):
@@ -55,12 +61,14 @@ def robot():
     """
     print("Parsing news...")
 
+    # Compiling regex patterns to clean the article text
     newline_regex = re.compile(r'\n+')
     adv_regex = re.compile(r'\s*Advertisement\s*')
 
     valid_articles_count = 0
     content['articles'] = []
 
+    # Loop through the entries and stop after fetching 5 valid articles
     for entry in content.get('entries', []):
       if valid_articles_count >= 5:
         break
@@ -68,24 +76,28 @@ def robot():
       print("Title:", entry['title'])
 
       try:
+        # Attempting to fetch the article content
         response = requests.get(entry['link'], timeout = 10)
         response.raise_for_status()
 
-        # Extract and clean the article text
+        # Initializing a newspaper Article object and setting the HTML content
         article = Article(entry['link'])
         article.set_html(response.content)
         article.parse()
 
+        # Cleaning the fetched article text by removing newline characters and advertisement text
         text = article.text
         text = newline_regex.sub('', text)
         text = adv_regex.sub('', text)
 
+        # Appending the cleaned text and title to the articles list
         content['articles'].append({'title': entry['title'], 'text': text})
         valid_articles_count += 1
         print("Article added")
       except requests.RequestException as e:
         print(f"Failed to fetch {entry['link']} due to error: {e}")
       except Exception as e:
+        # Catching any other exceptions that may occur during the article processing
         print(f"An error occurred while processing the article: {e}")
 
       print("---")
@@ -103,24 +115,36 @@ def robot():
     """
     print("Generating content...")
 
+    # Check if there are any articles present in the content dictionary
     if not content.get('articles'):
       print("No articles to generate content from.")
       content['content'] = ""
       return
 
+    # Joining the title and text of each article with a separator to form a single string
     content['content'] = " | ".join(
       f"Title: {article['title']}. {article['text']}"
       for article in content['articles']
     )
 
-    full_content = ""
-
     print("Content generation complete.\n---")
 
   def generate_script(content):
-    # Generate a script using OpenAI's GPT-4
+    """
+    Generates a YouTube script using OpenAI's GPT-4 based on the parsed and concatenated news content.
+
+    The generated script follows specific tone and content guidelines described in the user prompt.
+    The script is stored in the 'script' key in the content dictionary.
+
+    Parameters:
+    content (dict): Dictionary holding various pieces of information, including the content based on which the script will be generated.
+
+    Returns:
+    None: Modifies the content dictionary in place to add the generated script.
+    """
     print("Generating script, please wait...")
- 
+
+    # Formulating the prompt with guidelines for the script generation
     user_prompt = (
       f"{content['content']}"
       "With the information provided, write a youtube script using informal, opinionated, and somewhat satirical tone."
@@ -135,6 +159,7 @@ def robot():
     ) 
     
     try:
+      # Making a request to the OpenAI API to generate the script
       response = openai.ChatCompletion.create(
         model="gpt-4",
         temperature=1,
@@ -143,33 +168,46 @@ def robot():
         ]
       )
 
+      # Checking the response and extracting the script if the response is valid
       if response and response.choices:
         content['script'] = response.choices[0].message.content
       else:
         raise ValueError("Unexpected response format from OpenAI API")
     except Exception as e:
+      # Handling any exceptions that occur during the script generation
       print(f"Failed to generate script due to OpenAI API error: {e}")
       return
  
     print("Script generation complete.\n---")
 
   def generate_sentences(content):
-    # Break the generated script into sentences
+    """
+    Breaks the generated script into sentences and stores them in the content dictionary.
+
+    Parameters:
+    content (dict): Dictionary holding various pieces of information including the script to be broken down into sentences.
+
+    Returns:
+    None: Modifies the content dictionary in place to add the generated sentences.
+    """
     print("Generating sentences...")
+
+    # Check if script is None or empty and handle it appropriately
+    if not content.get('script'):
+      print("No script found to generate sentences.")
+      content['sentences'] = []
+      return
+
+    # Split the script into separate blocks using two or more newline characters as the delimiter
     sentences = re.split(r'\n{2,}', content['script'])
 
-    content['sentences'] = []
+    # Create a list of sentence dictionaries, filtering out empty and whitespace-only strings
+    content['sentences'] = [
+      {'id': idx, 'text': sentence, 'keywords': [], 'images': []}
+      for idx, sentence in enumerate(sentences)
+    ]
 
-    for idx, sentence in enumerate(sentences):
-      new_sentence = {
-          'id': idx,
-          'text': sentence,
-          'keywords': [],
-          'images': []
-      }
-      content['sentences'].append(new_sentence)
-    
-    print("Sentences generation complete.\n---")
+    print("Sentences generation complete.\n---") 
 
   def generate_keywords(content):
     # Extract keywords from the generated sentences using OpenAI
