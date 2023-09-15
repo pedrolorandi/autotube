@@ -7,10 +7,16 @@ import re
 import os
 import openai
 
+load_dotenv()
+
 def robot():
   # Initialize state handler and load content
   handler = StateHandler()
   content = handler.load()  
+
+  # Set OpenAI API credentials
+  openai.organization = os.environ.get('OPENAI_ORG_ID')
+  openai.api_key = os.environ.get('OPENAI_API_KEY')
 
   def fetch_news(query, duration="24h"):
     """Fetches news articles based on the query and duration provided.
@@ -114,22 +120,37 @@ def robot():
   def generate_script(content):
     # Generate a script using OpenAI's GPT-4
     print("Generating script, please wait...")
-    load_dotenv()
-
-    openai.organization = os.environ.get('OPENAI_ORG_ID')
-    openai.api_key = os.environ.get('OPENAI_API_KEY')
+ 
+    user_prompt = (
+      f"{content['content']}"
+      "With the information provided, write a youtube script using informal, opinionated, and somewhat satirical tone."
+      "Use casual language and often employ sarcasm to make points."
+      "Use a sense of skepticism towards media narratives and a desire to present a more down-to-earth perspective on events."
+      "The tone should be somewhat confrontational at times, challenging conventional ideas and encouraging the audience to think critically."
+      "Overall, the tone should be a blend of commentary, critique, and humor."
+      "To add pauses in the script, add a simple dash (-) or the em-dash (—)."
+      "The script should contain 3000 words. Don't write introduction and conclusion paragraphs."
+      "Don't welcome back people to the channel, and don't use conclusive phrases like 'See you next time'."
+      "WRITE THE SPEAKING PART ONLY."
+    ) 
     
-    user_prompt = content['content'] + "With the information provided, write a youtube script using informal, opinionated, and somewhat satirical tone. Use casual language and often employ sarcasm to make points. Use a sense of skepticism towards media narratives and a desire to present a more down-to-earth perspective on events. The tone should be somewhat confrontational at times, challenging conventional ideas and encouraging the audience to think critically. Overall, the tone should be a blend of commentary, critique, and humor. To add pauses in the script, add a simple dash (-) or the em-dash (—). The script should contain 3000 words. Don't write introduction and conclusion paragraphs. Don't welcome back people to the channel, and don't use conclusive phrases like 'See you next time'. WRITE THE SPEAKING PART ONLY."
-    
-    response = openai.ChatCompletion.create(
-      model="gpt-4",
-      temperature=1,
-      messages=[
-          {"role": "user", "content": user_prompt}
-      ]
-    )
+    try:
+      response = openai.ChatCompletion.create(
+        model="gpt-4",
+        temperature=1,
+        messages=[
+            {"role": "user", "content": user_prompt}
+        ]
+      )
 
-    content['script'] = response.choices[0].message.content
+      if response and response.choices:
+        content['script'] = response.choices[0].message.content
+      else:
+        raise ValueError("Unexpected response format from OpenAI API")
+    except Exception as e:
+      print(f"Failed to generate script due to OpenAI API error: {e}")
+      return
+ 
     print("Script generation complete.\n---")
 
   def generate_sentences(content):
@@ -153,10 +174,6 @@ def robot():
   def generate_keywords(content):
     # Extract keywords from the generated sentences using OpenAI
     print("Generating keywords...")
-    load_dotenv()
-
-    openai.organization = os.environ.get('OPENAI_ORG_ID')
-    openai.api_key = os.environ.get('OPENAI_API_KEY')
 
     for idx, sentence in enumerate(content['sentences']):
       user_prompt = "Please identify the keywords in the following phrase:" + sentence['text'] + ". Do not include " + content['searchTerm'] + "Return only the keywords split by a comma."
