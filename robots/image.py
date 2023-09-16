@@ -16,9 +16,9 @@ def robot():
   cse_api_key = os.environ.get('GOOGLE_CSE_API_KEY')
   cse_engine_id = os.environ.get('GOOGLE_CSE_ENGINE_ID')
 
-  for sentece in content['sentences']:
-    keywords =  ' '.join(sentece['keywords'])
-    searchTerm = content['searchTerm'] + ' ' + keywords
+  for sentence in content['sentences']:
+    # keywords =  ' '.join(sentence['keywords'])
+    # searchTerm = content['searchTerm'] + ' ' + keywords
 
     resource = build(
       'customsearch', 
@@ -27,13 +27,12 @@ def robot():
     ).cse()
     
     results = resource.list(
-      q = searchTerm, 
+      q = sentence['keywords'], 
       cx = cse_engine_id,
-      searchType = 'image',
-      imgSize = 'HUGE'
+      searchType = 'image', 
     ).execute()
 
-    print(searchTerm + ':\n')
+    print(sentence['keywords'] + ':\n')
 
     for result in results['items']:
       pprint.pprint(result['link'])
@@ -43,6 +42,6 @@ def robot():
     # Get images from results and append to the images list
 
     # for result in results['items']:
-    #   sentece['images'].append(result['link'])
+    #   sentence['images'].append(result['link'])
 
     # pprint.pprint(sentece)

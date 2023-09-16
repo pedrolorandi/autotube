@@ -10,8 +10,8 @@ robots = {
 }
 
 def start():
-  # robots['term']()
-  # robots['text']()
+  robots['term']()
+  robots['text']()
   # robots['audio']()
   robots['image']()
 

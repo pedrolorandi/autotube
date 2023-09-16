@@ -228,15 +228,15 @@ def robot():
       # Creating a user prompt to instruct the GPT-3.5-turbo model on how to extract keywords
       
       user_prompt = (
-        f"Please identify the keywords in the following phrase: {sentence['text']}. "
-        f"Do not include {content['searchTerm']}. "
-        "Return only the keywords split by a comma."
+        f"Context: {content['script']}"
+        f"Write a image search query to ilustrate following sentence: {sentence['text']}."
+        "Return only the search query."
       )
       
       try:
         # Making a request to the OpenAI API to extract keywords
         response = openai.ChatCompletion.create(
-          model="gpt-3.5-turbo",
+          model="gpt-4",
           temperature=0.5,
           messages=[
               {"role": "user", "content": user_prompt}
@@ -244,7 +244,7 @@ def robot():
         )
 
         # Storing the extracted keywords in the 'keywords' key of the sentence dictionary
-        sentence['keywords'] = response.choices[0].message.content.split(',')
+        sentence['keywords'] = response.choices[0].message.content.replace('"', '')
       except Exception as e:
         # Handling any exceptions that occur during the keyword extraction
         print(f"Failed to generate keywords for sentence {idx} due to OpenAI API error: {e}")
