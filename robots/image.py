@@ -27,12 +27,12 @@ def robot():
     ).cse()
     
     results = resource.list(
-      q = sentence['keywords'], 
+      q = sentence['image_search_query'], 
       cx = cse_engine_id,
       searchType = 'image', 
     ).execute()
 
-    print(sentence['keywords'] + ':\n')
+    print(sentence['image_search_query'] + ':\n')
 
     for result in results['items']:
       pprint.pprint(result['link'])

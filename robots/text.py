@@ -224,32 +224,28 @@ def robot():
 
     print("Sentences generation complete.\n---") 
 
-  def generate_keywords(content):
+  def generate_search_query(content):
     """
-    Extracts keywords from each sentence in the content dictionary using OpenAI's GPT-3.5-turbo model.
-    
-    The keywords for each sentence are stored in the 'keywords' key of each sentence dictionary.
-    
+    For each sentence in the 'sentences' list of the input dictionary `content`, this function extracts keywords using OpenAI's GPT-4 model and stores them in a new key called 'image_search_query'.
+
     Parameters:
-    content (dict): Dictionary holding various pieces of information, including the sentences from which keywords will be extracted.
+    content (dict): A dictionary containing various information, including a 'sentences' key which holds a list of dictionaries representing individual sentences with their respective details.
 
     Returns:
-    None: Modifies the content dictionary in place to add the extracted keywords.
+    None: This function modifies the input dictionary in place to include a 'image_search_query' key in each sentence dictionary with the corresponding extracted keywords.
     """
-    print("Generating keywords...")
+    print("Generating image search query...")
 
     # Looping through each sentence in the content dictionary to extract keywords
     for idx, sentence in enumerate(content['sentences']):
-      # Creating a user prompt to instruct the GPT-3.5-turbo model on how to extract keywords
-      
+      # Crafting a prompt for the GPT-4 model to instruct it to generate an image search query based on the sentence text
       user_prompt = (
-        f"Context: {content['script']}"
-        f"Write a image search query to ilustrate following sentence: {sentence['text']}."
+        f"Write an image search query to search for an image that illustrates the following sentence: {sentence['text']}."
         "Return only the search query."
       )
       
       try:
-        # Making a request to the OpenAI API to extract keywords
+        # Making a request to the OpenAI API generate a search query
         response = openai.ChatCompletion.create(
           model="gpt-4",
           temperature=0.5,
@@ -258,24 +254,24 @@ def robot():
           ]
         )
 
-        # Storing the extracted keywords in the 'keywords' key of the sentence dictionary
-        sentence['keywords'] = response.choices[0].message.content.replace('"', '')
+        # Storing the extracted image search query in the 'image_search_query' key of the sentence dictionary
+        sentence['image_search_query'] = response.choices[0].message.content.replace('"', '')
       except Exception as e:
-        # Handling any exceptions that occur during the keyword extraction
-        print(f"Failed to generate keywords for sentence {idx} due to OpenAI API error: {e}")
-        sentence['keywords'] = []
+        # Handling any exceptions that occur during the image search query generation
+        print(f"Failed to generate search term for sentence {idx} due to OpenAI API error: {e}")
+        sentence['image_search_query'] = []
         
-      print(f"Keywords for sentence {idx} completed.")
+      print(f"Image search query for sentence {idx} completed.")
     
-    print("Keywords generation complete.\n---")
+    print("Image search query generation complete.\n---")
 
   # Execution of all functions
   # fetch_news(content['searchTerm'])
   # parse_news(content)
   # generate_content(content)
   # generate_script(content)
-  generate_sentences(content)
-  # generate_keywords(content)
+  # generate_sentences(content)
+  generate_search_query(content)
 
   # Save the modified content back using the handler
   handler.save(content)
