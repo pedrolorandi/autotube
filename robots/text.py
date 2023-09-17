@@ -6,8 +6,12 @@ import requests
 import re
 import os
 import openai
+import nltk
+from nltk.tokenize import sent_tokenize
 
 load_dotenv()
+
+nltk.download('punkt')
 
 def robot():
   # Initialize state handler and load content
@@ -182,29 +186,40 @@ def robot():
 
   def generate_sentences(content):
     """
-    Breaks the generated script into sentences and stores them in the content dictionary.
+    Processes a script stored in the 'script' key of the input dictionary to generate a list of sentences, which is then stored back in the input dictionary under the 'sentences' key. Short sentences (less than or equal to 5 words) are merged with the following sentence. Each sentence is stored as a dictionary with keys 'id', 'text', 'keywords', and 'images'.
 
     Parameters:
-    content (dict): Dictionary holding various pieces of information including the script to be broken down into sentences.
+    content (dict): A dictionary that contains at least the 'script' key holding the script text to be broken down into sentences. The script is a single string where sentences are separated by full stops.
 
     Returns:
-    None: Modifies the content dictionary in place to add the generated sentences.
+    None: This function modifies the input dictionary in place, adding a 'sentences' key that holds the generated sentences. Each sentence is represented as a dictionary with an 'id' (the index of the sentence), 'text' (the sentence itself), 'keywords' (an empty list), and 'images' (an empty list).
     """
     print("Generating sentences...")
 
     # Check if script is None or empty and handle it appropriately
-    if not content.get('script'):
+    script = content.get('script')
+    if not script:
       print("No script found to generate sentences.")
       content['sentences'] = []
       return
 
-    # Split the script into separate blocks using two or more newline characters as the delimiter
-    sentences = re.split(r'\n{2,}', content['script'])
+    sentences = sent_tokenize(script)
+    sentence_count = len(sentences)
+    threshold = 5
+    merged_sentences = []
+    i = 0
 
-    # Create a list of sentence dictionaries, filtering out empty and whitespace-only strings
+    while i < sentence_count:
+      if len(sentences[i].split()) <= threshold and i < len(sentences) - 1:
+        merged_sentences.append(sentences[i] + " " + sentences[i + 1])
+        i += 2
+      else:
+        merged_sentences.append(sentences[i])
+        i += 1
+
     content['sentences'] = [
       {'id': idx, 'text': sentence, 'keywords': [], 'images': []}
-      for idx, sentence in enumerate(sentences)
+      for idx, sentence in enumerate(merged_sentences)
     ]
 
     print("Sentences generation complete.\n---") 
@@ -255,12 +270,12 @@ def robot():
     print("Keywords generation complete.\n---")
 
   # Execution of all functions
-  fetch_news(content['searchTerm'])
-  parse_news(content)
-  generate_content(content)
-  generate_script(content)
+  # fetch_news(content['searchTerm'])
+  # parse_news(content)
+  # generate_content(content)
+  # generate_script(content)
   generate_sentences(content)
-  generate_keywords(content)
+  # generate_keywords(content)
 
   # Save the modified content back using the handler
   handler.save(content)
