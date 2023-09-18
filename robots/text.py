@@ -266,11 +266,11 @@ def robot():
     print("Image search query generation complete.\n---")
 
   # Execution of all functions
-  # fetch_news(content['searchTerm'])
-  # parse_news(content)
-  # generate_content(content)
-  # generate_script(content)
-  # generate_sentences(content)
+  fetch_news(content['searchTerm'])
+  parse_news(content)
+  generate_content(content)
+  generate_script(content)
+  generate_sentences(content)
   generate_search_query(content)
 
   # Save the modified content back using the handler

@@ -20,6 +20,8 @@ def robot():
     # keywords =  ' '.join(sentence['keywords'])
     # searchTerm = content['searchTerm'] + ' ' + keywords
 
+    # TODO Refactor this function, add try/catch, check face
+
     resource = build(
       'customsearch', 
       'v1', 

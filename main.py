@@ -10,9 +10,9 @@ robots = {
 }
 
 def start():
-  # robots['term']()
+  robots['term']()
   robots['text']()
-  # robots['audio']()
+  robots['audio']()
   robots['image']()
 
 # Check if this script is executed as the main module
